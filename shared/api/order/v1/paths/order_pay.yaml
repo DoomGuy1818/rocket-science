@@ -1,0 +1,45 @@
+parameters:
+  - $ref: ../params/order_uuid.yaml
+
+post:
+  summary: Creates payment for order by ID
+  operationId: CreateOrderPaymentByID
+  tags:
+    - Order
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: ../components/order_payment_request.yaml
+  responses:
+    '200':
+      description: Order successfully payed
+      content:
+        application/json:
+          schema:
+            $ref: ../components/order_payment_response.yaml
+    '404':
+      description: Order information for specified ID not found
+      content:
+        application/json:
+          schema:
+            $ref: ../components/errors/not_found_error.yaml
+    '400':
+      description: Bad request - validation error
+      content:
+        application/json:
+          schema:
+            $ref: ../components/errors/bad_request_error.yaml
+    '500':
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: ../components/errors/internal_server_error.yaml
+    default:
+      description: Unexpected error
+      content:
+        application/json:
+          schema:
+            $ref: ../components/errors/generic_error.yaml

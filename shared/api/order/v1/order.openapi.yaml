@@ -1,0 +1,29 @@
+openapi: 3.1.0
+info:
+  title: OrderServiceAPI
+  description: OrderServiceAPI - сервис для работы с заказами делатей космических кораблей
+  version: 1.0.0
+
+x-ogen:
+  target: ./shared/pkg/openapi/order/v1
+  package: order_v1
+  clean: true
+
+tags:
+  - name: Order
+    description: Операции для работы с заказами -- поиск, создание, обновление, удаление заказов
+
+paths:
+  /api/v1/orders/{order_id}:
+    $ref: ./paths/order_by_uuid.yaml
+
+  /api/v1/orders:
+    $ref: ./paths/orders.yaml
+
+  /api/v1/orders/{order_id}/cancel:
+    $ref: ./paths/order_cancel.yaml
+
+  /api/v1/orders/{order_id}/pay:
+    $ref: ./paths/order_pay.yaml
+
+  

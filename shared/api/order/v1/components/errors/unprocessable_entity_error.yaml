@@ -1,0 +1,13 @@
+type: object
+required:
+  - code
+  - message
+properties:
+  code:
+    type: integer
+    description: 422
+    example: 422
+  message:
+    type: string
+    description: Order references details which does not exist
+    example: "Order references details which does not exist"

@@ -1,0 +1,6 @@
+type: string
+enum:
+  - UNKNOWN
+  - PAID
+  - PENDING_PAYMENT
+  - CANCELLED

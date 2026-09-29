@@ -1,0 +1,17 @@
+type: object
+required:
+  - user_uuid
+  - part_uuids
+properties:
+  user_uuid:
+    type: string
+    format: uuid
+    description: ID пользователя
+    example: 01a0bdc6-6280-732f-8517-52c3480db444
+  part_uuids:
+    type: array
+    items:
+      type: string
+      format: uuid
+    description: список ID деталей
+    example: [01a0bdc6-6280-732f-8517-52c3480db444]

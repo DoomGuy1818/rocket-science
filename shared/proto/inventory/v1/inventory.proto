@@ -1,0 +1,249 @@
+syntax = "proto3";
+
+package inventory.v1;
+
+import "google/protobuf/timestamp.proto";
+import "google/api/annotations.proto";
+import "validate/validate.proto";
+
+option go_package = "github.com/DoomGuy1818/rocket-science/shared/pkg/proto/inventory/v1;inventory_v1";
+
+service InventoryService {
+  rpc GetPart(GetPartRequest) returns (GetPartResponse) {
+    option (google.api.http) = {
+      get: "/api/v1/getPart"
+    };
+  };
+
+  rpc ListParts(ListPartsRequest) returns (ListPartsResponse) {
+    option (google.api.http) = {
+      get: "/api/v1/ListParts"
+    };
+  };
+}
+
+// Категория детали космического корабля.
+enum Category {
+  // Неизвестная категория.
+  UNKNOWN = 0;
+
+  // Двигатель.
+  ENGINE = 1;
+
+  // Топливо.
+  FUEL = 2;
+
+  // Иллюминатор.
+  PORTHOLE = 3;
+
+  // Крыло.
+  WING = 4;
+}
+
+// Информация о производителе детали.
+message Manufacturer {
+  // Название производителя.
+  string name = 1 [
+    (validate.rules).string.min_len = 1
+  ];
+
+  // Страна производителя.
+  string country = 2 [
+    (validate.rules).string.min_len = 1
+  ];
+
+  // Веб-сайт производителя.
+  string website = 3;
+}
+
+// Размеры и вес детали.
+message Dimensions {
+  // Длина детали в сантиметрах.
+  double length = 1 [
+    (validate.rules).double.gte = 0
+  ];
+
+  // Ширина детали в сантиметрах.
+  double width = 2 [
+    (validate.rules).double.gte = 0
+  ];
+
+  // Высота детали в сантиметрах.
+  double height = 3 [
+    (validate.rules).double.gte = 0
+  ];
+
+  // Вес детали в килограммах.
+  double weight = 4 [
+    (validate.rules).double.gte = 0
+  ];
+}
+
+// Значение метаданных детали.
+// Может содержать значение только одного типа.
+message Value {
+  oneof value {
+    // Строковое значение.
+    string string_value = 1;
+
+    // Целочисленное значение.
+    int64 int64_value = 2;
+
+    // Числовое значение с плавающей точкой.
+    double double_value = 3;
+
+    // Логическое значение.
+    bool bool_value = 4;
+  }
+}
+
+// Фильтры для поиска деталей.
+// Все фильтры являются необязательными.
+// Пустое поле означает, что фильтр по нему не применяется.
+message PartFilters {
+  // Список UUID деталей.
+  // Если список пуст, фильтрация по UUID не выполняется.
+  repeated string uuids = 1 [
+    (validate.rules).repeated = {
+      items: {
+        string: {
+          uuid: true
+        }
+      }
+    }
+  ];
+
+  // Список названий деталей.
+  // Если список пуст, фильтрация по названию не выполняется.
+  repeated string names = 2 [
+    (validate.rules).repeated = {
+      items: {
+        string: {
+          min_len: 10
+        }
+      }
+    }
+  ];
+
+  // Список категорий деталей.
+  // Если список пуст, фильтрация по категории не выполняется.
+  repeated Category categories = 3 [
+    (validate.rules).repeated = {
+      items: {
+        enum: {
+          defined_only: true
+        }
+      }
+    }
+  ];
+
+  // Список стран производителей.
+  // Если список пуст, фильтрация по стране производителя не выполняется.
+  repeated string manufacturer_countries = 4 [
+    (validate.rules).repeated = {
+      items: {
+        string: {
+          min_len: 5
+        }
+      }
+    }
+  ];
+
+  // Список тегов.
+  // Если список пуст, фильтрация по тегам не выполняется.
+  repeated string tags = 5 [
+    (validate.rules).repeated = {
+      items: {
+        string: {
+          min_len: 4
+        }
+      }
+    }
+  ];
+}
+
+// Информация о детали космического корабля.
+message Part {
+  // Уникальный идентификатор детали.
+  string uuid = 1 [
+    (validate.rules).string.uuid = true
+  ];
+
+  // Название детали.
+  string name = 2 [
+    (validate.rules).string.min_len = 4
+  ];
+
+  // Описание детали.
+  string description = 3;
+
+  // Цена одной единицы детали.
+  double price = 4 [
+    (validate.rules).double.gte = 0
+  ];
+
+  // Количество деталей на складе.
+  int64 stock_quantity = 5 [
+    (validate.rules).int64.gte = 0
+  ];
+
+  // Категория детали.
+  Category category = 6 [
+    (validate.rules).enum.defined_only = true
+  ];
+
+  // Размеры и вес детали.
+  Dimensions dimensions = 7;
+
+  // Информация о производителе.
+  Manufacturer manufacturer = 8;
+
+  // Список тегов детали.
+  repeated string tags = 9 [
+    (validate.rules).repeated = {
+      items: {
+        string: {
+          min_len: 1
+        }
+      }
+    }
+  ];
+
+  // Дополнительные метаданные детали.
+  // Ключ — название метаданных, значение — значение произвольного типа.
+  map<string, Value> metadata = 10;
+
+  // Дата и время создания детали.
+  google.protobuf.Timestamp created_at = 11;
+
+  // Дата и время последнего обновления детали.
+  google.protobuf.Timestamp updated_at = 12;
+}
+
+// Запрос на получение детали по UUID.
+message GetPartRequest {
+  // UUID детали.
+  string uuid = 1 [
+    (validate.rules).string.uuid = true
+  ];
+}
+
+// Ответ на запрос получения детали.
+message GetPartResponse {
+  // Найденная деталь.
+  Part part = 1;
+}
+
+// Запрос на получение списка деталей.
+// Позволяет применить несколько фильтров одновременно.
+message ListPartsRequest {
+  // Набор фильтров для поиска деталей.
+  // Если фильтры не заданы, возвращаются все детали.
+  PartFilters filter = 1;
+}
+
+// Ответ на запрос получения списка деталей.
+message ListPartsResponse {
+  // Список найденных деталей.
+  repeated Part parts = 1;
+}

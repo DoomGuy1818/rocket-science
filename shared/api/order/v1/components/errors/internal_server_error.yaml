@@ -1,0 +1,13 @@
+type: object
+required:
+  - code
+  - message
+properties:
+  code:
+    type: integer
+    description: 500
+    example: 500
+  message:
+    type: string
+    description: Internal server error
+    example: "Internal server error"
