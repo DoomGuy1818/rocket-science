@@ -1,0 +1,47 @@
+type: object
+required:
+  - order_uuid
+  - user_uuid
+  - part_uuids
+  - total_price
+  - transaction_uuid
+  - payment_method
+  - status
+properties:
+  order_uuid:
+    type: string
+    format: uuid
+    description: ID заказа
+    example: 01a0bdc6-6280-732f-8517-52c3480db444
+  user_uuid:
+    type: string
+    format: uuid
+    description: ID пользователя
+    example: 01a0bdc6-6280-732f-8517-52c3480db444
+  part_uuids:
+    type: array
+    items:
+      type: string
+      format: uuid
+    description: список ID деталей
+    example: 01a0bdc6-6280-732f-8517-52c3480db444
+  total_price:
+    type: number
+    format: float
+    description: цена товаров в корзине
+    example: 315.32
+  transaction_uuid:
+    type: string
+    format: uuid
+    description: ID транзакции. Если есть
+    example: 01a0bdc6-6280-732f-8517-52c3480db444
+  payment_method:
+    allOf:
+      - $ref: "./enum/payment_method.yaml"
+    description: Способ Оплаты
+    example: "SBP"
+  status:
+    allOf:
+      - $ref: ./enum/payment_status.yaml
+    description: Статус заказа
+    example: "PAID"

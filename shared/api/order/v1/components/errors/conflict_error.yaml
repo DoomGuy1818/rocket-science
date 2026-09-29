@@ -1,0 +1,13 @@
+type: object
+required:
+  - code
+  - message
+properties:
+  code:
+    type: integer
+    description: 409
+    example: 409
+  message:
+    type: string
+    description: Order already paid
+    example: "Conflict: Cannot cancel already paid order"

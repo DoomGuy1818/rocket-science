@@ -1,0 +1,13 @@
+type: object
+required:
+  - code
+  - message
+properties:
+  code:
+    type: integer
+    description: 400
+    example: 400
+  message:
+    type: string
+    description: Bad Requests
+    example: "Bad Request: Invalid parameter format"

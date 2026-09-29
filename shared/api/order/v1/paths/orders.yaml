@@ -1,0 +1,36 @@
+post:
+  summary: create orders
+  operationId: CreateOrderByID
+  tags:
+    - Order
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: ../components/order_create_request.yaml
+  responses:
+    '200':
+      description: Order successfully created
+      content:
+        application/json:
+          schema:
+            $ref: ../components/order_create_response.yaml
+    '422':
+      description: Order references to details which does not exist
+      content:
+        application/json:
+          schema:
+            $ref: ../components/errors/unprocessable_entity_error.yaml
+    '500':
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: ../components/errors/internal_server_error.yaml
+    default:
+      description: Unexpected error
+      content:
+        application/json:
+          schema:
+            $ref: ../components/errors/generic_error.yaml
