@@ -6,6 +6,8 @@ import (
 	"github.com/google/uuid"
 )
 
+type Metadata map[string]Value
+
 type Category string
 
 const (
@@ -61,13 +63,14 @@ type Dimensions struct {
 type Manufacturer struct {
 	Name    string
 	Country string
+	Website string
 }
 
 type Part struct {
 	UUID          uuid.UUID
 	Name          string
 	Description   string
-	Price         string
+	Price         float64
 	StockQuantity int
 	Category      Category
 	Dimensions    Dimensions

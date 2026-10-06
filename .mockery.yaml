@@ -1,0 +1,14 @@
+template: testify
+dir: "{{.InterfaceDir}}/mocks"
+filename: "mock_{{.InterfaceName | snakecase}}.go"
+structname: "Mock{{.InterfaceName}}"
+pkgname: mocks
+
+packages:
+  github.com/DoomGuy1818/rocket-science/inventory/internal/service:
+    config:
+      include-interface-regex: ".*Service"
+
+  github.com/DoomGuy1818/rocket-science/inventory/internal/repository:
+    config:
+      include-interface-regex: ".*Repository"
