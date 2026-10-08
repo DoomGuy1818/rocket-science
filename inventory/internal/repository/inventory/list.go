@@ -8,7 +8,7 @@ import (
 	repoModel "github.com/DoomGuy1818/rocket-science/inventory/internal/repository/model"
 )
 
-func (i *Repository) List(_ context.Context, filters *model.PartsFilter) []model.Part {
+func (i *repository) List(_ context.Context, filters *model.PartsFilter) []model.Part {
 	i.mu.RLock()
 	defer i.mu.RUnlock()
 
@@ -25,7 +25,7 @@ func (i *Repository) List(_ context.Context, filters *model.PartsFilter) []model
 	return response
 }
 
-func (i *Repository) matchesFilter(part *repoModel.Part, filter *repoModel.PartsFilter) bool {
+func (i *repository) matchesFilter(part *repoModel.Part, filter *repoModel.PartsFilter) bool {
 	if len(filter.PartUuids) > 0 && !contains(filter.PartUuids, part.UUID) {
 		return false
 	}

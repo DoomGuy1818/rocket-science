@@ -6,6 +6,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/samber/lo"
+	"github.com/stretchr/testify/require"
 
 	"github.com/DoomGuy1818/rocket-science/inventory/internal/model"
 )
@@ -70,7 +71,8 @@ func (s *ApiSuite) TestListParts() {
 			test.name, func() {
 				s.repo.On("List", ctx, &test.filters).Return(test.repoAns).Once()
 
-				s.service.ListByFilters(ctx, &test.filters)
+				actualParts := s.service.ListByFilters(ctx, &test.filters)
+				require.Equal(s.T(), test.expParts, actualParts)
 			},
 		)
 	}

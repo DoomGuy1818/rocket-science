@@ -12,3 +12,19 @@ packages:
   github.com/DoomGuy1818/rocket-science/inventory/internal/repository:
     config:
       include-interface-regex: ".*Repository"
+
+  github.com/DoomGuy1818/rocket-science/payment/internal/service:
+    config:
+      include-interface-regex: ".*Service"
+
+  github.com/DoomGuy1818/rocket-science/order/internal/service:
+    config:
+      include-interface-regex: ".*Service"
+
+  github.com/DoomGuy1818/rocket-science/order/internal/repository:
+    config:
+      include-interface-regex: ".*Repository"
+
+  github.com/DoomGuy1818/rocket-science/order/internal/client/grpc:
+    config:
+      include-interface-regex: ".*Client"

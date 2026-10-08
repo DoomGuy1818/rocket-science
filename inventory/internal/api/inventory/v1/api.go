@@ -8,10 +8,10 @@ import (
 type api struct {
 	inventoryV1.UnimplementedInventoryServiceServer
 
-	inventoryService service.InventoryService
+	inventoryService service.Service
 }
 
-func NewAPI(inventoryService service.InventoryService) *api {
+func NewAPI(inventoryService service.Service) *api {
 	return &api{
 		inventoryService: inventoryService,
 	}

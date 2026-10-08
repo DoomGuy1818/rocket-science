@@ -9,7 +9,7 @@ import (
 	modelConverter "github.com/DoomGuy1818/rocket-science/inventory/internal/repository/converter"
 )
 
-func (i *Repository) Get(_ context.Context, uuid uuid.UUID) (model.Part, error) {
+func (i *repository) Get(_ context.Context, uuid uuid.UUID) (model.Part, error) {
 	i.mu.RLock()
 	defer i.mu.RUnlock()
 
