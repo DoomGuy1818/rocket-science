@@ -2,7 +2,6 @@ package inventory
 
 import (
 	"context"
-	"errors"
 
 	"github.com/google/uuid"
 
@@ -12,9 +11,6 @@ import (
 func (i *service) GetByID(ctx context.Context, uuid uuid.UUID) (model.Part, error) {
 	part, err := i.inventoryRepository.Get(ctx, uuid)
 	if err != nil {
-		if errors.Is(err, model.ErrNotFound) {
-			return model.Part{}, err
-		}
 		return model.Part{}, err
 	}
 

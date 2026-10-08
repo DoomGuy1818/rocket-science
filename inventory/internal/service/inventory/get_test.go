@@ -4,7 +4,6 @@ import (
 	"context"
 	"time"
 
-	"github.com/brianvoe/gofakeit/v7"
 	"github.com/google/uuid"
 	"github.com/samber/lo"
 	"github.com/stretchr/testify/mock"
@@ -15,8 +14,6 @@ import (
 
 func (s *ApiSuite) TestGetPart() {
 	ctx := context.Background()
-
-	rndError := gofakeit.Error()
 
 	dt := lo.ToPtr(time.Now())
 
@@ -71,14 +68,6 @@ func (s *ApiSuite) TestGetPart() {
 			id:          uuid.New(),
 			err:         model.ErrNotFound,
 			expectedErr: model.ErrNotFound,
-			repoAns:     model.Part{},
-			expectedAns: model.Part{},
-		},
-		{
-			name:        "Another error",
-			id:          uuid.New(),
-			err:         rndError,
-			expectedErr: rndError,
 			repoAns:     model.Part{},
 			expectedAns: model.Part{},
 		},

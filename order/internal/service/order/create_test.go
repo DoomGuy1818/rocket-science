@@ -48,7 +48,8 @@ func (s *ApiSuite) TestCreateOrder() {
 			parts: []model.Part{
 				{UUID: partUUIDs[0], Price: 100}, // вернули только 1
 			},
-			err: model.ErrCannotProcessOrder,
+			err:           model.ErrCannotProcessOrder,
+			expectedPrice: 0,
 		},
 	}
 
