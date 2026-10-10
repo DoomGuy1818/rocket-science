@@ -1,4 +1,4 @@
-#!/bin/bash
+Ы#!/bin/bash
 
 # Скрипт для извлечения версий инструментов из Taskfile.yml
 # Использование: .github/scripts/extract-versions.sh
