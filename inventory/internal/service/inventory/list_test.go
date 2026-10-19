@@ -2,6 +2,7 @@ package inventory
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	"github.com/google/uuid"
@@ -13,19 +14,22 @@ import (
 
 func (s *ApiSuite) TestListParts() {
 	ctx := context.Background()
-
 	dt := lo.ToPtr(time.Now())
 
 	tests := []struct {
 		name     string
 		filters  model.PartsFilter
 		repoAns  []model.Part
+		repoErr  error
 		expParts []model.Part
+		expErr   error
 	}{
 		{
 			name: "successful get some parts",
 			filters: model.PartsFilter{
-				PartUuids: []uuid.UUID{uuid.MustParse("3f2b8c1e-7a4d-4e9b-9c3a-5d6e8f1a2b47")},
+				PartUuids: []uuid.UUID{
+					uuid.MustParse("3f2b8c1e-7a4d-4e9b-9c3a-5d6e8f1a2b47"),
+				},
 			},
 			repoAns: []model.Part{
 				{
@@ -64,14 +68,44 @@ func (s *ApiSuite) TestListParts() {
 				},
 			},
 		},
+		{
+			name:     "successful get empty list",
+			filters:  model.PartsFilter{},
+			repoAns:  []model.Part{},
+			expParts: []model.Part{},
+		},
+		{
+			name:     "repository returns error",
+			filters:  model.PartsFilter{},
+			repoAns:  []model.Part{},
+			repoErr:  errors.New("repository error"),
+			expParts: []model.Part{},
+			expErr:   errors.New("repository error"),
+		},
 	}
 
 	for _, test := range tests {
 		s.Run(
 			test.name, func() {
-				s.repo.On("List", ctx, &test.filters).Return(test.repoAns).Once()
+				filter := test.filters
 
-				actualParts := s.service.ListByFilters(ctx, &test.filters)
+				s.repo.On(
+					"List",
+					ctx,
+					&filter,
+				).Return(
+					test.repoAns,
+					test.repoErr,
+				).Once()
+
+				actualParts, err := s.service.ListByFilters(ctx, &filter)
+
+				if test.expErr != nil {
+					require.ErrorContains(s.T(), err, test.expErr.Error())
+				} else {
+					require.NoError(s.T(), err)
+				}
+
 				require.Equal(s.T(), test.expParts, actualParts)
 			},
 		)

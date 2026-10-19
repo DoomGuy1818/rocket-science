@@ -2,28 +2,51 @@ package order
 
 import (
 	"context"
+	"fmt"
+	"log"
+	"strings"
 
 	"github.com/google/uuid"
 
-	"github.com/DoomGuy1818/rocket-science/order/internal/repository/model"
+	domainModel "github.com/DoomGuy1818/rocket-science/order/internal/model"
 )
 
-func (s *repository) Create(_ context.Context, userID uuid.UUID, parts []uuid.UUID, totalPrice float64) (
+func (r *repository) Create(ctx context.Context, userID uuid.UUID, parts []domainModel.Part, totalPrice float64) (
 	uuid.UUID,
 	float64,
 	error,
 ) {
-	orderID := uuid.New()
+	var queryBuilder strings.Builder
 
-	order := &model.Order{
-		OrderID:    orderID,
-		UserID:     userID,
-		Parts:      parts,
-		TotalPrice: totalPrice,
-		Status:     model.StatusPendingPayment,
+	queryBuilder.WriteString(
+		"INSERT INTO order_parts (id, order_id, part_id, price) VALUES ",
+	)
+
+	args := make([]any, 0, len(parts)*4)
+
+	for i, part := range parts {
+		if i > 0 {
+			queryBuilder.WriteString(", ")
+		}
+
+		offset := i * 4
+
+		fmt.Fprintf(
+			&queryBuilder,
+			"($%d, $%d, $%d, $%d)",
+			offset+1, offset+2, offset+3, offset+4,
+		)
+
+		args = append(args, uuid.New(), uuid.New(), part.UUID, part.Price)
 	}
 
-	s.orders[orderID] = order
+	if len(parts) > 0 {
+		_, err := r.orders.Exec(ctx, queryBuilder.String(), args...)
+		if err != nil {
+			log.Printf("failed to insert order parts: %v", err)
+			return uuid.Nil, 0, domainModel.ErrInternalServerError
+		}
+	}
 
-	return orderID, order.TotalPrice, nil
+	return userID, totalPrice, nil
 }

@@ -370,6 +370,62 @@ tasks:
           echo "📂 Отчёт сохранён в $OUTPUT (открой вручную)"
         fi
 
+  core:up:
+    desc: "Поднимает core контейнеры"
+    dir: deploy/compose/core
+    cmds:
+      - echo "[task] 🚀 Поднимаем core контейнеры"
+      - docker compose up --build --detach
+
+  core:down:
+    desc: "Останавливает core контейнеры"
+    dir: deploy/compose/core
+    cmds:
+      - echo "[task] 🛑 Останавливаем core контейнеры"
+      - docker compose down
+
+  inventory:up:
+    desc: "Поднимает inventory контейнеры"
+    dir: deploy/compose/inventory
+    cmds:
+      - echo "[task] 🚀 Поднимаем inventory контейнеры"
+      - docker compose up --build --detach
+
+  inventory:down:
+    desc: "Останавливает inventory контейнеры"
+    dir: deploy/compose/inventory
+    cmds:
+      - echo "[task] 🛑 Останавливаем inventory контейнеры"
+      - docker compose down
+
+  order:up:
+    desc: "Поднимает order контейнеры"
+    dir: deploy/compose/order
+    cmds:
+      - echo "[task] 🚀 Поднимаем order контейнеры"
+      - docker compose up --build --detach
+
+  order:down:
+    desc: "Останавливает order контейнеры"
+    dir: deploy/compose/order
+    cmds:
+      - echo "[task] 🛑 Останавливаем order контейнеры"
+      - docker compose down
+
+  stack:up:
+    desc: "Поднимает все core, inventory и order контейнеры"
+    cmds:
+      - task: core:up
+      - task: inventory:up
+      - task: order:up
+
+  stack:down:
+    desc: "Останавливает все core, inventory и order контейнеры"
+    cmds:
+      - task: order:down
+      - task: inventory:down
+      - task: core:down
+
   test:
     desc: "Запускает юнит-тесты для всех модулей"
     summary: |

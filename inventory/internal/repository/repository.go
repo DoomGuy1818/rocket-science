@@ -10,5 +10,5 @@ import (
 
 type InventoryRepository interface {
 	Get(ctx context.Context, uuid uuid.UUID) (model.Part, error)
-	List(ctx context.Context, filterParts *model.PartsFilter) []model.Part
+	List(ctx context.Context, filterParts *model.PartsFilter) ([]model.Part, error)
 }

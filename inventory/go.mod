@@ -6,7 +6,6 @@ replace github.com/DoomGuy1818/rocket-science/shared => ../shared
 
 require (
 	github.com/DoomGuy1818/rocket-science/shared v0.0.0-00010101000000-000000000000
-	github.com/brianvoe/gofakeit/v7 v7.17.1
 	github.com/go-faster/errors v0.8.0
 	github.com/google/uuid v1.6.0
 	github.com/samber/lo v1.53.0
@@ -20,9 +19,9 @@ require (
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.30.0 // indirect
 	github.com/stretchr/objx v0.5.3 // indirect
 	go.yaml.in/yaml/v3 v3.0.5 // indirect
-	golang.org/x/net v0.57.0 // indirect
-	golang.org/x/sys v0.47.0 // indirect
-	golang.org/x/text v0.40.0 // indirect
-	google.golang.org/genproto/googleapis/api v0.0.0-20260921155816-b14227669459 // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20260918162117-cecb64721679 // indirect
+	golang.org/x/net v0.61.0 // indirect
+	golang.org/x/sys v0.49.0 // indirect
+	golang.org/x/text v0.43.0 // indirect
+	google.golang.org/genproto/googleapis/api v0.0.0-20261005182115-fad411399dd8 // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20261005182115-fad411399dd8 // indirect
 )

@@ -13,12 +13,15 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	"github.com/jackc/pgx/v5/stdlib"
+	"github.com/joho/godotenv"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 
 	v1 "github.com/DoomGuy1818/rocket-science/order/internal/api/order/v1"
 	invClient "github.com/DoomGuy1818/rocket-science/order/internal/client/grpc/inventory/v1"
 	payClient "github.com/DoomGuy1818/rocket-science/order/internal/client/grpc/payment/v1"
+	"github.com/DoomGuy1818/rocket-science/order/internal/migrator"
 	orderRepo "github.com/DoomGuy1818/rocket-science/order/internal/repository/order"
 	orderService "github.com/DoomGuy1818/rocket-science/order/internal/service/order"
 	orderV1 "github.com/DoomGuy1818/rocket-science/shared/pkg/openapi/order/v1"
@@ -35,7 +38,27 @@ const (
 )
 
 func main() {
-	storage := orderRepo.NewStorage()
+	err := godotenv.Load(".env")
+	if err != nil {
+		log.Printf("failed to load .env file: %v\n", err)
+		return
+	}
+
+	dbURI := os.Getenv("DB_URI")
+
+	storage := orderRepo.NewStorage(context.Background(), dbURI)
+
+	migrationsDir := os.Getenv("MIGRATIONS_DIR")
+	migratorRunner := migrator.NewMigrator(
+		stdlib.OpenDB(*storage.Copy()),
+		migrationsDir,
+	)
+
+	err = migratorRunner.Up()
+	if err != nil {
+		log.Printf("Ошибка миграции базы данных: %v\n", err)
+		return
+	}
 
 	inventoryConn, err := grpc.NewClient(
 		InventoryServiceAddress,

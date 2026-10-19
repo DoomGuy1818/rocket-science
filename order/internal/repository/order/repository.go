@@ -1,29 +1,35 @@
 package order
 
 import (
-	"github.com/google/uuid"
+	"context"
+	"log"
+	"os"
 
-	repoModel "github.com/DoomGuy1818/rocket-science/order/internal/repository/model"
+	"github.com/jackc/pgx/v5"
 )
 
 type repository struct {
-	orders map[uuid.UUID]*repoModel.Order
+	orders *pgx.Conn
 }
 
-func NewStorage() *repository {
+func NewStorage(ctx context.Context, dbURI string) *repository {
+	conn, err := pgx.Connect(ctx, dbURI)
+	if err != nil {
+		log.Printf("failed to connect to database: %v\n", err)
+		os.Exit(1)
+	}
+
+	err = conn.Ping(ctx)
+	if err != nil {
+		log.Printf("База данных недоступна: %v\n", err)
+		os.Exit(1)
+	}
+
 	return &repository{
-		orders: make(map[uuid.UUID]*repoModel.Order),
+		orders: conn,
 	}
 }
 
-func copyPartUUIDs(src []uuid.UUID) []uuid.UUID {
-	if src == nil {
-		return nil
-	}
-
-	dst := make([]uuid.UUID, len(src))
-
-	copy(dst, src)
-
-	return dst
+func (r *repository) Copy() *pgx.ConnConfig {
+	return r.orders.Config()
 }

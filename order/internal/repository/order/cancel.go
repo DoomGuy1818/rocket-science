@@ -2,30 +2,25 @@ package order
 
 import (
 	"context"
+	"database/sql"
+	"log"
 
+	"github.com/go-faster/errors"
 	"github.com/google/uuid"
 
-	"github.com/DoomGuy1818/rocket-science/order/internal/model"
-	repoModel "github.com/DoomGuy1818/rocket-science/order/internal/repository/model"
+	domainModel "github.com/DoomGuy1818/rocket-science/order/internal/model"
 )
 
-func (s *repository) Cancel(_ context.Context, orderID uuid.UUID) error {
-	order, ok := s.orders[orderID]
-	if !ok {
-		return model.ErrOrderNotFound
+func (r *repository) Cancel(ctx context.Context, orderID uuid.UUID) error {
+	res, err := r.orders.Exec(ctx, "UPDATE orders SET status = 'CANCELLED' WHERE id = $1", orderID)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return domainModel.ErrOrderNotFound
+		}
+		log.Printf("failed to cancel order: %v", err)
+		return err
 	}
 
-	updatedOrder := &repoModel.Order{
-		OrderID:       order.OrderID,
-		UserID:        order.UserID,
-		Parts:         copyPartUUIDs(order.Parts),
-		TotalPrice:    order.TotalPrice,
-		TransactionID: order.TransactionID,
-		PaymentMethod: order.PaymentMethod,
-		Status:        repoModel.StatusCanceled,
-	}
-
-	s.orders[orderID] = updatedOrder
-
+	log.Printf("cancelled %d rows\n", res.RowsAffected())
 	return nil
 }

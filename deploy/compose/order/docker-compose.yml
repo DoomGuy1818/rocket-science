@@ -1,0 +1,29 @@
+services:
+  postgres-order:
+    image: postgres:18.1-alpine3.23
+    container_name: postgres
+    environment: # Переменные окружения для инициализации MongoDB
+      POSTGRES_DB: order # Имя базы данных, которая будет создана при запуске
+      POSTGRES_USER: order-sudo # Имя пользователя, создаваемого в базе
+      POSTGRES_PASSWORD: 12345678 # Пароль для указанного пользователя
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "${POSTGRES_PORT}:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+    restart: unless-stopped
+
+    networks:
+      - microservices-network
+
+volumes:
+  postgres_data:
+
+networks:
+  microservices-network:
+    external: true
