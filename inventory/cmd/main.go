@@ -3,91 +3,50 @@ package main
 import (
 	"context"
 	"fmt"
-	"log"
-	"net"
-	"os"
 	"os/signal"
+	"platform/closer"
+	"platform/pkg/logger"
 	"syscall"
+	"time"
 
-	"github.com/joho/godotenv"
-	"go.mongodb.org/mongo-driver/v2/mongo"
-	"go.mongodb.org/mongo-driver/v2/mongo/options"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/reflection"
-
-	v1 "github.com/DoomGuy1818/rocket-science/inventory/internal/api/inventory/v1"
-	"github.com/DoomGuy1818/rocket-science/inventory/internal/repository/inventory"
-	inventoryService "github.com/DoomGuy1818/rocket-science/inventory/internal/service/inventory"
-	invV1 "github.com/DoomGuy1818/rocket-science/shared/pkg/proto/inventory/v1"
+	"github.com/DoomGuy1818/rocket-science/inventory/internal/app"
+	"github.com/DoomGuy1818/rocket-science/inventory/internal/config"
+	"go.uber.org/zap"
 )
 
-const grpcPort = 50051
+const configPath = "./deploy/compose/inventory/.env"
 
 func main() {
-	err := godotenv.Load(".env")
+	err := config.Load(configPath)
 	if err != nil {
-		log.Printf("failed to load .env file: %v\n", err)
+		panic(fmt.Errorf("failed to load config: %w", err))
+	}
+
+	appCtx, cancelCtx := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
+
+	defer cancelCtx()
+	defer gracefulShutdown()
+
+	closer.Configure(syscall.SIGINT, syscall.SIGTERM)
+
+	a, err := app.New(appCtx)
+	if err != nil {
+		logger.Error(appCtx, "❌ Не удалось создать приложение", zap.Error(err))
 		return
 	}
 
-	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", grpcPort))
+	err = a.Run(appCtx)
 	if err != nil {
-		log.Printf("failed to listen: %v", err)
-	}
-	defer func() {
-		if cerr := lis.Close(); err != nil {
-			log.Printf("failed to close listener: %v", cerr)
-		}
-	}()
-
-	s := grpc.NewServer()
-
-	ctx := context.Background()
-
-	dbURI := os.Getenv("MONGO_URI")
-
-	client, err := mongo.Connect(options.Client().ApplyURI(dbURI))
-	if err != nil {
-		log.Printf("failed to connect to database: %v\n", err)
+		logger.Error(appCtx, "❌ Не удалось запустить приложение", zap.Error(err))
 		return
 	}
+}
 
-	defer func() {
-		cerr := client.Disconnect(ctx)
-		if cerr != nil {
-			log.Printf("failed to disconnect: %v\n", cerr)
-		}
-	}()
+func gracefulShutdown() {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
 
-	if err = client.Ping(ctx, nil); err != nil {
-		log.Printf("failed to ping database: %v\n", err)
+	if err := closer.CloseAll(ctx); err != nil {
+		logger.Error(ctx, "❌ Ошибка при завершении работы", zap.Error(err))
 	}
-
-	db := client.Database("parts")
-
-	repo := inventory.NewRepository(db)
-	serv := inventoryService.NewService(repo)
-	api := v1.NewAPI(serv)
-
-	invV1.RegisterInventoryServiceServer(s, api)
-
-	reflection.Register(s)
-
-	go func() {
-		log.Printf("🚀 gRPC server listening on %d\n", grpcPort)
-
-		if err = s.Serve(lis); err != nil {
-			log.Printf("failed to serve: %v", err)
-		}
-	}()
-
-	quit := make(chan os.Signal, 1)
-	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
-	<-quit
-
-	log.Printf("Shutdown Server ...")
-
-	s.GracefulStop()
-
-	log.Printf("Shutdown Server exiting")
 }

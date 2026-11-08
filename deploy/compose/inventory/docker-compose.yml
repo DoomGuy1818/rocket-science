@@ -1,17 +1,21 @@
 services:
   inventory-service:
-    image: mongo:8.0.4
+    image: ${MONGO_IMAGE_NAME}
     container_name: mongo_db
 
-    environment: # Переменные окружения, используемые при запуске контейнера
-      MONGO_INITDB_DATABASE: ${MONGO_INITDB_DATABASE} # Имя базы данных, которая будет создана при запуске
-      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME} # Имя root-пользователя MongoDB
-      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD} # Пароль для root-пользователя
+    env_file:
+      - .env
+
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME} # Логин для MongoDB из .env
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD} # Пароль для MongoDB из .env
+      MONGO_INITDB_DATABASE: ${MONGO_INITDB_DATABASE} # Создаем базу данных при инициализации
+      MONGO_AUTH_DB: ${MONGO_AUTH_DB}
 
     volumes:
       - mongo_data:/data/db
     ports:
-      - "27017:27017"
+      - "${MONGO_PORT}:27017"
     healthcheck:
       test: ["CMD-SHELL",
              "echo 'db.runCommand({ ping: 1 }).ok' | mongosh --quiet -u ${MONGO_INITDB_ROOT_USERNAME} -p ${MONGO_INITDB_ROOT_PASSWORD} --authenticationDatabase ${MONGO_AUTH_DB}",

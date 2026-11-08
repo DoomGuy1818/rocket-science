@@ -9,7 +9,7 @@ import (
 	paymentV1 "github.com/DoomGuy1818/rocket-science/shared/pkg/proto/payment/v1"
 )
 
-func (c *client) Pay(ctx context.Context, orderID, userID uuid.UUID, paymentMethod string) (
+func (c *Client) Pay(ctx context.Context, orderID, userID uuid.UUID, paymentMethod string) (
 	uuid.UUID,
 	error,
 ) {

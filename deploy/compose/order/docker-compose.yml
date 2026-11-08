@@ -2,10 +2,15 @@ services:
   postgres-order:
     image: postgres:18.1-alpine3.23
     container_name: postgres
-    environment: # Переменные окружения для инициализации MongoDB
-      POSTGRES_DB: order # Имя базы данных, которая будет создана при запуске
-      POSTGRES_USER: order-sudo # Имя пользователя, создаваемого в базе
-      POSTGRES_PASSWORD: 12345678 # Пароль для указанного пользователя
+
+    env_file:
+      - .env
+
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER} # Пользователь базы данных из .env
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD} # Пароль базы данных из .env
+      POSTGRES_DB: ${POSTGRES_DB}
+
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:

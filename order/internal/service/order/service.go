@@ -6,13 +6,13 @@ import (
 )
 
 type service struct {
-	orderStorage    repository.OrderRepository
+	orderStorage    repository.Repository
 	inventoryClient grpc.InventoryClient
 	paymentClient   grpc.PaymentClient
 }
 
 func NewService(
-	orderStorage repository.OrderRepository,
+	orderStorage repository.Repository,
 	inventoryClient grpc.InventoryClient,
 	paymentClient grpc.PaymentClient,
 ) *service {

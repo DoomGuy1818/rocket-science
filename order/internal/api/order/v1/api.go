@@ -9,10 +9,10 @@ import (
 )
 
 type orderHandler struct {
-	orderService service.OrderService
+	orderService service.Service
 }
 
-func NewOrderHandler(orderService service.OrderService) *orderHandler {
+func NewOrderHandler(orderService service.Service) *orderHandler {
 	return &orderHandler{
 		orderService: orderService,
 	}

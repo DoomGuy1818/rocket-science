@@ -9,7 +9,7 @@ import (
 	repoModel "github.com/DoomGuy1818/rocket-science/order/internal/repository/model"
 )
 
-type OrderRepository interface {
+type Repository interface {
 	Create(ctx context.Context, userID uuid.UUID, parts []model.Part, totalPrice float64) (uuid.UUID, float64, error)
 	Cancel(ctx context.Context, orderID uuid.UUID) error
 	Get(ctx context.Context, orderID uuid.UUID) (repoModel.Order, error)

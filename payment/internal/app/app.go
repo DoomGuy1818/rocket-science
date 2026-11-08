@@ -1,0 +1,128 @@
+package app
+
+import (
+	"context"
+	"errors"
+	"fmt"
+	"net"
+	"platform/closer"
+	health "platform/grpc"
+	"platform/pkg/logger"
+
+	"github.com/DoomGuy1818/rocket-science/payment/internal/config"
+	paymentV1 "github.com/DoomGuy1818/rocket-science/shared/pkg/proto/payment/v1"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/grpc/reflection"
+)
+
+type App struct {
+	di         *diContainer
+	grpcServer *grpc.Server
+	listener   net.Listener
+}
+
+func New(ctx context.Context) (*App, error) {
+	a := &App{}
+
+	err := a.initDeps(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return a, nil
+}
+
+func (a *App) initDeps(ctx context.Context) error {
+	inits := []func(ctx context.Context) error{
+		a.initDI,
+		a.initLogger,
+		a.initCloser,
+		a.initListener,
+		a.initGRPCServer,
+	}
+
+	for _, f := range inits {
+		err := f(ctx)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (a *App) Run(ctx context.Context) error {
+	return a.runGRPCServer(ctx)
+}
+
+func (a *App) initDI(_ context.Context) error {
+	a.di = NewDiContainer()
+	return nil
+}
+
+func (a *App) initLogger(_ context.Context) error {
+	return logger.Init(
+		config.AppConfig().Logger.Level(),
+		config.AppConfig().Logger.AsJson(),
+	)
+}
+
+func (a *App) initCloser(_ context.Context) error {
+	closer.SetLogger(logger.Logger())
+
+	return nil
+}
+
+func (a *App) initListener(_ context.Context) error {
+	listener, err := net.Listen("tcp", config.AppConfig().PaymentGRPC.Address())
+	if err != nil {
+		return err
+	}
+
+	closer.AddNamed(
+		"TCP listener", func(ctx context.Context) error {
+			lerr := listener.Close()
+			if lerr != nil && !errors.Is(lerr, net.ErrClosed) {
+				return lerr
+			}
+
+			return nil
+		},
+	)
+
+	a.listener = listener
+
+	return nil
+}
+
+func (a *App) initGRPCServer(ctx context.Context) error {
+	a.grpcServer = grpc.NewServer(grpc.Creds(insecure.NewCredentials()))
+
+	closer.AddNamed(
+		"gRPC server", func(ctx context.Context) error {
+			a.grpcServer.GracefulStop()
+			return nil
+		},
+	)
+
+	reflection.Register(a.grpcServer)
+
+	health.RegisterService(a.grpcServer)
+
+	paymentV1.RegisterPaymentServiceServer(a.grpcServer, a.di.NewPaymentAPIV1(ctx))
+
+	return nil
+}
+
+func (a *App) runGRPCServer(ctx context.Context) error {
+	logger.Info(
+		ctx, fmt.Sprintf("🚀 gRPC PaymentService listening on %s", config.AppConfig().PaymentGRPC.Address()),
+	)
+
+	if err := a.grpcServer.Serve(a.listener); err != nil {
+		return err
+	}
+
+	return nil
+}
