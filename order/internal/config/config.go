@@ -3,8 +3,9 @@ package config
 import (
 	"os"
 
-	"github.com/DoomGuy1818/rocket-science/order/internal/config/env"
 	"github.com/joho/godotenv"
+
+	"github.com/DoomGuy1818/rocket-science/order/internal/config/env"
 )
 
 var appConfig *config

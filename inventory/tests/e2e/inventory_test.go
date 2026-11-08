@@ -2,13 +2,13 @@ package e2e
 
 import (
 	"context"
-	"log"
 
-	inventoryV1 "github.com/DoomGuy1818/rocket-science/shared/pkg/proto/inventory/v1"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
+
+	inventoryV1 "github.com/DoomGuy1818/rocket-science/shared/pkg/proto/inventory/v1"
 )
 
 var _ = Describe(
@@ -53,7 +53,6 @@ var _ = Describe(
 						var err error
 						partUUID, err = env.InsertTestPart(ctx)
 						Expect(err).ToNot(HaveOccurred(), "ожидали успешную вставку тестовых деталей в MongoDB")
-						log.Printf(partUUID)
 					},
 				)
 

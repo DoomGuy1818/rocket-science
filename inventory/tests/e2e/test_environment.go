@@ -55,7 +55,6 @@ func (env *TestEnvironment) InsertTestPart(ctx context.Context) (string, error) 
 		Database(databaseName).
 		Collection(orderCollectionName).
 		InsertOne(ctx, partDoc)
-
 	if err != nil {
 		return "", err
 	}

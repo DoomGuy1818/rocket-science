@@ -5,15 +5,16 @@ import (
 	"errors"
 	"fmt"
 	"net"
-	"platform/closer"
-	health "platform/grpc"
-	"platform/pkg/logger"
 
-	"github.com/DoomGuy1818/rocket-science/payment/internal/config"
-	paymentV1 "github.com/DoomGuy1818/rocket-science/shared/pkg/proto/payment/v1"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/reflection"
+
+	"github.com/DoomGuy1818/rocket-science/payment/internal/config"
+	"github.com/DoomGuy1818/rocket-science/platform/closer"
+	health "github.com/DoomGuy1818/rocket-science/platform/grpc"
+	"github.com/DoomGuy1818/rocket-science/platform/pkg/logger"
+	paymentV1 "github.com/DoomGuy1818/rocket-science/shared/pkg/proto/payment/v1"
 )
 
 type App struct {

@@ -3,7 +3,9 @@ package app
 import (
 	"context"
 	"fmt"
-	"platform/closer"
+
+	"go.mongodb.org/mongo-driver/v2/mongo"
+	"go.mongodb.org/mongo-driver/v2/mongo/options"
 
 	inventoryV1API "github.com/DoomGuy1818/rocket-science/inventory/internal/api/inventory/v1"
 	"github.com/DoomGuy1818/rocket-science/inventory/internal/config"
@@ -11,9 +13,8 @@ import (
 	inventoryRepository "github.com/DoomGuy1818/rocket-science/inventory/internal/repository/inventory"
 	"github.com/DoomGuy1818/rocket-science/inventory/internal/service"
 	inventoryService "github.com/DoomGuy1818/rocket-science/inventory/internal/service/inventory"
+	"github.com/DoomGuy1818/rocket-science/platform/closer"
 	inventoryV1 "github.com/DoomGuy1818/rocket-science/shared/pkg/proto/inventory/v1"
-	"go.mongodb.org/mongo-driver/v2/mongo"
-	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
 
 type diContainer struct {

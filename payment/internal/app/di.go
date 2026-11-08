@@ -6,7 +6,6 @@ import (
 	v1 "github.com/DoomGuy1818/rocket-science/payment/internal/api/v1"
 	"github.com/DoomGuy1818/rocket-science/payment/internal/service"
 	"github.com/DoomGuy1818/rocket-science/payment/internal/service/payment"
-
 	paymentV1 "github.com/DoomGuy1818/rocket-science/shared/pkg/proto/payment/v1"
 )
 

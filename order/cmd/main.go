@@ -4,14 +4,15 @@ import (
 	"context"
 	"fmt"
 	"os/signal"
-	"platform/closer"
-	"platform/pkg/logger"
 	"syscall"
 	"time"
 
+	"go.uber.org/zap"
+
 	"github.com/DoomGuy1818/rocket-science/order/internal/app"
 	"github.com/DoomGuy1818/rocket-science/order/internal/config"
-	"go.uber.org/zap"
+	"github.com/DoomGuy1818/rocket-science/platform/closer"
+	"github.com/DoomGuy1818/rocket-science/platform/pkg/logger"
 )
 
 const configPath = "./deploy/compose/order/.env"

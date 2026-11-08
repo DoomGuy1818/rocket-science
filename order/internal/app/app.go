@@ -5,17 +5,18 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
-	"platform/closer"
-	"platform/migrator"
-	"platform/pkg/logger"
 	"time"
+
+	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
 
 	inventoryV1Client "github.com/DoomGuy1818/rocket-science/order/internal/client/grpc/inventory/v1"
 	paymentV1Client "github.com/DoomGuy1818/rocket-science/order/internal/client/grpc/payment/v1"
 	"github.com/DoomGuy1818/rocket-science/order/internal/config"
+	"github.com/DoomGuy1818/rocket-science/platform/closer"
+	"github.com/DoomGuy1818/rocket-science/platform/migrator"
+	"github.com/DoomGuy1818/rocket-science/platform/pkg/logger"
 	orderV1 "github.com/DoomGuy1818/rocket-science/shared/pkg/openapi/order/v1"
-	"github.com/go-chi/chi/v5"
-	"github.com/go-chi/chi/v5/middleware"
 )
 
 type App struct {
@@ -109,7 +110,6 @@ func (a *App) initInventoryGRPCClient(ctx context.Context) error {
 
 	closer.AddNamed(
 		"http Server", func(ctx context.Context) error {
-
 			if err := a.httpServer.Shutdown(ctx); err != nil {
 				logger.Error(ctx, fmt.Sprintf("cannot shutdown server: %v", err))
 				return err

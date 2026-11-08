@@ -3,17 +3,17 @@ package e2e
 import (
 	"context"
 	"os"
-	"platform/pkg/testcontainers"
-	"platform/pkg/testcontainers/mongo"
 	"time"
-
-	"platform/pkg/logger"
-	"platform/pkg/testcontainers/app"
-	"platform/pkg/testcontainers/network"
-	"platform/pkg/testcontainers/path"
 
 	"github.com/testcontainers/testcontainers-go/wait"
 	"go.uber.org/zap"
+
+	"github.com/DoomGuy1818/rocket-science/platform/pkg/logger"
+	"github.com/DoomGuy1818/rocket-science/platform/pkg/testcontainers"
+	"github.com/DoomGuy1818/rocket-science/platform/pkg/testcontainers/app"
+	"github.com/DoomGuy1818/rocket-science/platform/pkg/testcontainers/mongo"
+	"github.com/DoomGuy1818/rocket-science/platform/pkg/testcontainers/network"
+	"github.com/DoomGuy1818/rocket-science/platform/pkg/testcontainers/path"
 )
 
 const (

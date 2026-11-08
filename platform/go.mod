@@ -1,6 +1,8 @@
-module platform
+module github.com/DoomGuy1818/rocket-science/platform
 
 go 1.27.1
+
+replace github.com/DoomGuy1818/rocket-science/shared => ../shared
 
 require (
 	github.com/go-faster/errors v0.8.0

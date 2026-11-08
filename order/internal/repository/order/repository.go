@@ -9,7 +9,6 @@ type repository struct {
 }
 
 func NewRepository(conn *pgx.Conn) *repository {
-
 	return &repository{
 		orders: conn,
 	}

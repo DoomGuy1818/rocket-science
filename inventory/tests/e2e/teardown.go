@@ -3,9 +3,9 @@ package e2e
 import (
 	"context"
 
-	"platform/pkg/logger"
-
 	"go.uber.org/zap"
+
+	"github.com/DoomGuy1818/rocket-science/platform/pkg/logger"
 )
 
 func teardownTestEnvironment(ctx context.Context, environment *TestEnvironment) {

@@ -9,9 +9,9 @@ import (
 	"sync"
 	"time"
 
-	"platform/pkg/logger"
-
 	"go.uber.org/zap"
+
+	"github.com/DoomGuy1818/rocket-science/platform/pkg/logger"
 )
 
 const shutdownTimeout = 5 * time.Second

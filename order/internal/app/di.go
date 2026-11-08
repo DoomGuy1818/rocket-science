@@ -4,9 +4,11 @@ import (
 	"context"
 	"fmt"
 	"os"
-	"platform/closer"
-	"platform/migrator"
-	"platform/pkg/logger"
+
+	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/stdlib"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 
 	orderV1API "github.com/DoomGuy1818/rocket-science/order/internal/api/order/v1"
 	inventoryV1Client "github.com/DoomGuy1818/rocket-science/order/internal/client/grpc/inventory/v1"
@@ -16,14 +18,12 @@ import (
 	orderRepo "github.com/DoomGuy1818/rocket-science/order/internal/repository/order"
 	"github.com/DoomGuy1818/rocket-science/order/internal/service"
 	"github.com/DoomGuy1818/rocket-science/order/internal/service/order"
-	"github.com/jackc/pgx/v5/stdlib"
-	"google.golang.org/grpc/credentials/insecure"
-
+	"github.com/DoomGuy1818/rocket-science/platform/closer"
+	"github.com/DoomGuy1818/rocket-science/platform/migrator"
+	"github.com/DoomGuy1818/rocket-science/platform/pkg/logger"
 	orderV1 "github.com/DoomGuy1818/rocket-science/shared/pkg/openapi/order/v1"
 	inventoryV1 "github.com/DoomGuy1818/rocket-science/shared/pkg/proto/inventory/v1"
 	paymentV1 "github.com/DoomGuy1818/rocket-science/shared/pkg/proto/payment/v1"
-	"github.com/jackc/pgx/v5"
-	"google.golang.org/grpc"
 )
 
 type diContainer struct {
