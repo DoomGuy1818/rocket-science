@@ -1,4 +1,4 @@
-package e2e
+package integration
 
 const (
 	projectName = "order-service"
