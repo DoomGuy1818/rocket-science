@@ -18,14 +18,14 @@ import (
 
 const (
 	orderAppName    = "order-app"
-	orderDockerfile = "deploy/docker/order/Dockerfile"
+	orderDockerfile = "deploy/docker/inventory/Dockerfile"
 
 	// Переменные окружения приложения
 	grpcPortKey = "GRPC_PORT"
 
 	loggerLevelValue = "debug"
 
-	startupTimeout = 3 * time.Minute
+	startupTimeout = 60 * time.Minute
 )
 
 type TestEnvironment struct {

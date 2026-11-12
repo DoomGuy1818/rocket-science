@@ -35,6 +35,10 @@ func WithNetwork(network string) Option {
 
 func WithEnv(env map[string]string) Option {
 	return func(c *Config) {
+		if c.Env == nil {
+			c.Env = make(map[string]string, len(env))
+		}
+
 		for k, v := range env {
 			c.Env[k] = v
 		}

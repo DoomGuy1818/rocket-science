@@ -440,7 +440,7 @@ tasks:
         for mod in {{.MODULES}}; do
           if [ -d "$mod" ]; then
             echo "🧪 Тестируем модуль $mod"
-            go test -v ./$mod/... || ERR=1
+            go test -v -tags="!integration" $(go list ./$mod/... | grep -v -E '(/integration|/tests/integration|/integrationtests)') || ERR=1
           fi
         done
         exit $ERR      
@@ -717,3 +717,11 @@ tasks:
           fi
         done
         exit $ERR
+        
+  e2e:test:ufo:
+    desc: "Запускает e2e тесты для UFO сервиса"
+    dir: ufo/tests/e2e
+    cmds:
+      - echo "🚀 Запуск e2e тестов UFO сервиса..."
+      - cd ../../ && go mod tidy
+      - go test -tags=integration -v ./...

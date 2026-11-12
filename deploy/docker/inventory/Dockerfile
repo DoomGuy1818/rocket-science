@@ -2,7 +2,7 @@
 # Stage 1: Build app
 # ============================
 
-FROM golang:1.27-alpine:3.24.3 as builder
+FROM golang:1.27-alpine AS builder
 
 RUN apk add --no-cache git
 
@@ -28,7 +28,7 @@ ADD https://github.com/grpc-ecosystem/grpc-health-probe/releases/download/v0.4.3
 
 RUN chmod +x grpc-health-probe
 
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o app-inventory ./inventory/cmd/grpc_server/main.go
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o app-inventory ./inventory/cmd/main.go
 
 # ============================
 # Stage 2: Final image
@@ -46,7 +46,7 @@ COPY --from=builder /app/app-inventory .
 
 COPY --from=builder /app/grpc-health-probe /bin/grpc-health-probe
 
-COPY deploy/compose/payment/.env .env
+COPY /deploy/compose/inventory/.env .env
 
 EXPOSE 50052
 

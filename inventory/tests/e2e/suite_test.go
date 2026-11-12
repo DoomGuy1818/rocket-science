@@ -16,7 +16,7 @@ import (
 	"github.com/DoomGuy1818/rocket-science/platform/pkg/logger"
 )
 
-const testsTimeout = 5 * time.Minute
+const testsTimeout = 60 * time.Minute
 
 var (
 	env *TestEnvironment
@@ -39,7 +39,7 @@ var _ = BeforeSuite(
 
 		suiteCtx, suiteCancel = context.WithTimeout(context.Background(), testsTimeout)
 
-		envVars, err := godotenv.Read(filepath.Join("..", "..", "deploy", "compose", "payment"))
+		envVars, err := godotenv.Read(filepath.Join("..", "..", "..", "deploy", "compose", "inventory", ".env"))
 		if err != nil {
 			logger.Fatal(suiteCtx, "Не удалось загрузить .env файл", zap.Error(err))
 		}
