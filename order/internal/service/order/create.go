@@ -28,7 +28,7 @@ func (s *service) Create(ctx context.Context, userID uuid.UUID, partIDs []uuid.U
 		totalPrice += part.Price
 	}
 
-	orderID, price, err := s.orderStorage.Create(ctx, userID, partIDs, totalPrice)
+	orderID, price, err := s.orderStorage.Create(ctx, userID, parts, totalPrice)
 	if err != nil {
 		return uuid.Nil, 0, err
 	}

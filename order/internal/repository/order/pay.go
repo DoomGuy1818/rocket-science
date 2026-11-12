@@ -2,30 +2,31 @@ package order
 
 import (
 	"context"
+	"database/sql"
+	"errors"
+	"log"
 
 	"github.com/google/uuid"
 
 	"github.com/DoomGuy1818/rocket-science/order/internal/model"
-	repoModel "github.com/DoomGuy1818/rocket-science/order/internal/repository/model"
 )
 
-func (s *repository) Pay(_ context.Context, orderID, transactionID uuid.UUID, payMethod string) error {
-	order, ok := s.orders[orderID]
-	if !ok {
-		return model.ErrOrderNotFound
+func (r *repository) Pay(ctx context.Context, orderID, transactionID uuid.UUID, payMethod string) error {
+	res, err := r.orders.Exec(
+		ctx,
+		"UPDATE orders SET payment_method=$1, transaction_id=$2 WHERE id=$3",
+		payMethod,
+		transactionID,
+		orderID,
+	)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return model.ErrOrderNotFound
+		}
+
+		return err
 	}
 
-	updatedOrder := &repoModel.Order{
-		OrderID:       orderID,
-		UserID:        order.UserID,
-		Parts:         order.Parts,
-		TotalPrice:    order.TotalPrice,
-		TransactionID: transactionID,
-		PaymentMethod: repoModel.PaymentMethod(payMethod),
-		Status:        repoModel.StatusPaid,
-	}
-
-	s.orders[orderID] = updatedOrder
-
+	log.Printf("ipdated %d rows\n", res.RowsAffected())
 	return nil
 }

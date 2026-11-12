@@ -8,7 +8,7 @@ import (
 	"github.com/DoomGuy1818/rocket-science/order/internal/model"
 )
 
-type OrderService interface {
+type Service interface {
 	Create(ctx context.Context, userID uuid.UUID, parts []uuid.UUID) (uuid.UUID, float64, error)
 	PayOrder(
 		ctx context.Context,

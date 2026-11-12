@@ -6,7 +6,7 @@ import (
 	"github.com/google/uuid"
 )
 
-type Metadata map[string]Value
+type Metadata map[string]any
 
 type Category string
 
@@ -76,7 +76,7 @@ type Part struct {
 	Dimensions    Dimensions
 	Manufacturer  Manufacturer
 	Tags          []string
-	Metadata      map[string]Value
+	Metadata      Metadata `bson:"metadata"`
 	CreatedAt     *time.Time
 	UpdatedAt     *time.Time
 }

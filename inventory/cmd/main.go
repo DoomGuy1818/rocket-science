@@ -1,60 +1,53 @@
 package main
 
 import (
+	"context"
 	"fmt"
-	"log"
-	"net"
-	"os"
 	"os/signal"
 	"syscall"
+	"time"
 
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/reflection"
+	"go.uber.org/zap"
 
-	v1 "github.com/DoomGuy1818/rocket-science/inventory/internal/api/inventory/v1"
-	"github.com/DoomGuy1818/rocket-science/inventory/internal/repository/inventory"
-	inventoryService "github.com/DoomGuy1818/rocket-science/inventory/internal/service/inventory"
-	invV1 "github.com/DoomGuy1818/rocket-science/shared/pkg/proto/inventory/v1"
+	"github.com/DoomGuy1818/rocket-science/inventory/internal/app"
+	"github.com/DoomGuy1818/rocket-science/inventory/internal/config"
+	"github.com/DoomGuy1818/rocket-science/platform/closer"
+	"github.com/DoomGuy1818/rocket-science/platform/pkg/logger"
 )
 
-const grpcPort = 50051
+const configPath = "./deploy/compose/inventory/.env"
 
 func main() {
-	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", grpcPort))
+	err := config.Load(configPath)
 	if err != nil {
-		log.Printf("failed to listen: %v", err)
+		panic(fmt.Errorf("failed to load config: %w", err))
 	}
-	defer func() {
-		if cerr := lis.Close(); err != nil {
-			log.Printf("failed to close listener: %v", cerr)
-		}
-	}()
 
-	s := grpc.NewServer()
+	appCtx, cancelCtx := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 
-	repo := inventory.NewRepository()
-	serv := inventoryService.NewService(repo)
-	api := v1.NewAPI(serv)
+	defer cancelCtx()
+	defer gracefulShutdown()
 
-	invV1.RegisterInventoryServiceServer(s, api)
+	closer.Configure(syscall.SIGINT, syscall.SIGTERM)
 
-	reflection.Register(s)
+	a, err := app.New(appCtx)
+	if err != nil {
+		logger.Error(appCtx, "❌ Не удалось создать приложение", zap.Error(err))
+		return
+	}
 
-	go func() {
-		log.Printf("🚀 gRPC server listening on %d\n", grpcPort)
+	err = a.Run(appCtx)
+	if err != nil {
+		logger.Error(appCtx, "❌ Не удалось запустить приложение", zap.Error(err))
+		return
+	}
+}
 
-		if err = s.Serve(lis); err != nil {
-			log.Printf("failed to serve: %v", err)
-		}
-	}()
+func gracefulShutdown() {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
 
-	quit := make(chan os.Signal, 1)
-	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
-	<-quit
-
-	log.Printf("Shutdown Server ...")
-
-	s.GracefulStop()
-
-	log.Printf("Shutdown Server exiting")
+	if err := closer.CloseAll(ctx); err != nil {
+		logger.Error(ctx, "❌ Ошибка при завершении работы", zap.Error(err))
+	}
 }

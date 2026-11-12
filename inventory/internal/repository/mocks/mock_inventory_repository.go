@@ -115,7 +115,7 @@ func (_c *MockInventoryRepository_Get_Call) RunAndReturn(run func(ctx context.Co
 }
 
 // List provides a mock function for the type MockInventoryRepository
-func (_mock *MockInventoryRepository) List(ctx context.Context, filterParts *model.PartsFilter) []model.Part {
+func (_mock *MockInventoryRepository) List(ctx context.Context, filterParts *model.PartsFilter) ([]model.Part, error) {
 	ret := _mock.Called(ctx, filterParts)
 
 	if len(ret) == 0 {
@@ -123,6 +123,10 @@ func (_mock *MockInventoryRepository) List(ctx context.Context, filterParts *mod
 	}
 
 	var r0 []model.Part
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, *model.PartsFilter) ([]model.Part, error)); ok {
+		return returnFunc(ctx, filterParts)
+	}
 	if returnFunc, ok := ret.Get(0).(func(context.Context, *model.PartsFilter) []model.Part); ok {
 		r0 = returnFunc(ctx, filterParts)
 	} else {
@@ -130,7 +134,12 @@ func (_mock *MockInventoryRepository) List(ctx context.Context, filterParts *mod
 			r0 = ret.Get(0).([]model.Part)
 		}
 	}
-	return r0
+	if returnFunc, ok := ret.Get(1).(func(context.Context, *model.PartsFilter) error); ok {
+		r1 = returnFunc(ctx, filterParts)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
 }
 
 // MockInventoryRepository_List_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'List'
@@ -163,12 +172,12 @@ func (_c *MockInventoryRepository_List_Call) Run(run func(ctx context.Context, f
 	return _c
 }
 
-func (_c *MockInventoryRepository_List_Call) Return(parts []model.Part) *MockInventoryRepository_List_Call {
-	_c.Call.Return(parts)
+func (_c *MockInventoryRepository_List_Call) Return(parts []model.Part, err error) *MockInventoryRepository_List_Call {
+	_c.Call.Return(parts, err)
 	return _c
 }
 
-func (_c *MockInventoryRepository_List_Call) RunAndReturn(run func(ctx context.Context, filterParts *model.PartsFilter) []model.Part) *MockInventoryRepository_List_Call {
+func (_c *MockInventoryRepository_List_Call) RunAndReturn(run func(ctx context.Context, filterParts *model.PartsFilter) ([]model.Part, error)) *MockInventoryRepository_List_Call {
 	_c.Call.Return(run)
 	return _c
 }

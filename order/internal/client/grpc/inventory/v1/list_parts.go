@@ -11,7 +11,7 @@ import (
 	inventoryV1 "github.com/DoomGuy1818/rocket-science/shared/pkg/proto/inventory/v1"
 )
 
-func (c *client) ListParts(ctx context.Context, ids []uuid.UUID) ([]model.Part, error) {
+func (c *Client) ListParts(ctx context.Context, ids []uuid.UUID) ([]model.Part, error) {
 	uuids := make([]string, 0, len(ids))
 	for _, id := range ids {
 		uuids = append(uuids, id.String())

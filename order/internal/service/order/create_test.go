@@ -72,10 +72,11 @@ func (s *ApiSuite) TestCreateOrder() {
 						"Create",
 						ctx,
 						tt.userID,
-						tt.partIDs,
+						tt.parts, // вместо tt.partIDs
 						tt.expectedPrice,
 					).
-					Return(orderID, tt.expectedPrice, nil)
+					Return(orderID, tt.expectedPrice, nil).
+					Once()
 
 				actualID, actualPrice, err := s.service.Create(ctx, tt.userID, tt.partIDs)
 

@@ -1,29 +1,19 @@
 package order
 
 import (
-	"github.com/google/uuid"
-
-	repoModel "github.com/DoomGuy1818/rocket-science/order/internal/repository/model"
+	"github.com/jackc/pgx/v5"
 )
 
 type repository struct {
-	orders map[uuid.UUID]*repoModel.Order
+	orders *pgx.Conn
 }
 
-func NewStorage() *repository {
+func NewRepository(conn *pgx.Conn) *repository {
 	return &repository{
-		orders: make(map[uuid.UUID]*repoModel.Order),
+		orders: conn,
 	}
 }
 
-func copyPartUUIDs(src []uuid.UUID) []uuid.UUID {
-	if src == nil {
-		return nil
-	}
-
-	dst := make([]uuid.UUID, len(src))
-
-	copy(dst, src)
-
-	return dst
+func (r *repository) Copy() *pgx.ConnConfig {
+	return r.orders.Config()
 }

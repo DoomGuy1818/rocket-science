@@ -2,6 +2,7 @@ package v1
 
 import (
 	"context"
+	"log"
 
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -16,7 +17,18 @@ func (a *api) ListParts(ctx context.Context, req *invV1.ListPartsRequest) (*invV
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
 
-	parts := a.inventoryService.ListByFilters(ctx, filter)
+	parts, err := a.inventoryService.ListByFilters(ctx, filter)
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+
+	for _, part := range parts {
+		log.Printf(
+			"Part: %s, Metadata: %#v",
+			part.Name,
+			part.Metadata,
+		)
+	}
 
 	return &invV1.ListPartsResponse{
 		Parts: conventer.ModelPartsToProto(parts),

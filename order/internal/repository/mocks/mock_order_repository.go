@@ -7,7 +7,8 @@ package mocks
 import (
 	"context"
 
-	"github.com/DoomGuy1818/rocket-science/order/internal/repository/model"
+	"github.com/DoomGuy1818/rocket-science/order/internal/model"
+	model0 "github.com/DoomGuy1818/rocket-science/order/internal/repository/model"
 	"github.com/google/uuid"
 	mock "github.com/stretchr/testify/mock"
 )
@@ -106,7 +107,7 @@ func (_c *MockOrderRepository_Cancel_Call) RunAndReturn(run func(ctx context.Con
 }
 
 // Create provides a mock function for the type MockOrderRepository
-func (_mock *MockOrderRepository) Create(ctx context.Context, userID uuid.UUID, parts []uuid.UUID, totalPrice float64) (uuid.UUID, float64, error) {
+func (_mock *MockOrderRepository) Create(ctx context.Context, userID uuid.UUID, parts []model.Part, totalPrice float64) (uuid.UUID, float64, error) {
 	ret := _mock.Called(ctx, userID, parts, totalPrice)
 
 	if len(ret) == 0 {
@@ -116,22 +117,22 @@ func (_mock *MockOrderRepository) Create(ctx context.Context, userID uuid.UUID, 
 	var r0 uuid.UUID
 	var r1 float64
 	var r2 error
-	if returnFunc, ok := ret.Get(0).(func(context.Context, uuid.UUID, []uuid.UUID, float64) (uuid.UUID, float64, error)); ok {
+	if returnFunc, ok := ret.Get(0).(func(context.Context, uuid.UUID, []model.Part, float64) (uuid.UUID, float64, error)); ok {
 		return returnFunc(ctx, userID, parts, totalPrice)
 	}
-	if returnFunc, ok := ret.Get(0).(func(context.Context, uuid.UUID, []uuid.UUID, float64) uuid.UUID); ok {
+	if returnFunc, ok := ret.Get(0).(func(context.Context, uuid.UUID, []model.Part, float64) uuid.UUID); ok {
 		r0 = returnFunc(ctx, userID, parts, totalPrice)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(uuid.UUID)
 		}
 	}
-	if returnFunc, ok := ret.Get(1).(func(context.Context, uuid.UUID, []uuid.UUID, float64) float64); ok {
+	if returnFunc, ok := ret.Get(1).(func(context.Context, uuid.UUID, []model.Part, float64) float64); ok {
 		r1 = returnFunc(ctx, userID, parts, totalPrice)
 	} else {
 		r1 = ret.Get(1).(float64)
 	}
-	if returnFunc, ok := ret.Get(2).(func(context.Context, uuid.UUID, []uuid.UUID, float64) error); ok {
+	if returnFunc, ok := ret.Get(2).(func(context.Context, uuid.UUID, []model.Part, float64) error); ok {
 		r2 = returnFunc(ctx, userID, parts, totalPrice)
 	} else {
 		r2 = ret.Error(2)
@@ -147,13 +148,13 @@ type MockOrderRepository_Create_Call struct {
 // Create is a helper method to define mock.On call
 //   - ctx context.Context
 //   - userID uuid.UUID
-//   - parts []uuid.UUID
+//   - parts []model.Part
 //   - totalPrice float64
 func (_e *MockOrderRepository_Expecter) Create(ctx any, userID any, parts any, totalPrice any) *MockOrderRepository_Create_Call {
 	return &MockOrderRepository_Create_Call{Call: _e.mock.On("Create", ctx, userID, parts, totalPrice)}
 }
 
-func (_c *MockOrderRepository_Create_Call) Run(run func(ctx context.Context, userID uuid.UUID, parts []uuid.UUID, totalPrice float64)) *MockOrderRepository_Create_Call {
+func (_c *MockOrderRepository_Create_Call) Run(run func(ctx context.Context, userID uuid.UUID, parts []model.Part, totalPrice float64)) *MockOrderRepository_Create_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		var arg0 context.Context
 		if args[0] != nil {
@@ -163,9 +164,9 @@ func (_c *MockOrderRepository_Create_Call) Run(run func(ctx context.Context, use
 		if args[1] != nil {
 			arg1 = args[1].(uuid.UUID)
 		}
-		var arg2 []uuid.UUID
+		var arg2 []model.Part
 		if args[2] != nil {
-			arg2 = args[2].([]uuid.UUID)
+			arg2 = args[2].([]model.Part)
 		}
 		var arg3 float64
 		if args[3] != nil {
@@ -186,28 +187,28 @@ func (_c *MockOrderRepository_Create_Call) Return(uUID uuid.UUID, f float64, err
 	return _c
 }
 
-func (_c *MockOrderRepository_Create_Call) RunAndReturn(run func(ctx context.Context, userID uuid.UUID, parts []uuid.UUID, totalPrice float64) (uuid.UUID, float64, error)) *MockOrderRepository_Create_Call {
+func (_c *MockOrderRepository_Create_Call) RunAndReturn(run func(ctx context.Context, userID uuid.UUID, parts []model.Part, totalPrice float64) (uuid.UUID, float64, error)) *MockOrderRepository_Create_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // Get provides a mock function for the type MockOrderRepository
-func (_mock *MockOrderRepository) Get(ctx context.Context, orderID uuid.UUID) (model.Order, error) {
+func (_mock *MockOrderRepository) Get(ctx context.Context, orderID uuid.UUID) (model0.Order, error) {
 	ret := _mock.Called(ctx, orderID)
 
 	if len(ret) == 0 {
 		panic("no return value specified for Get")
 	}
 
-	var r0 model.Order
+	var r0 model0.Order
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(context.Context, uuid.UUID) (model.Order, error)); ok {
+	if returnFunc, ok := ret.Get(0).(func(context.Context, uuid.UUID) (model0.Order, error)); ok {
 		return returnFunc(ctx, orderID)
 	}
-	if returnFunc, ok := ret.Get(0).(func(context.Context, uuid.UUID) model.Order); ok {
+	if returnFunc, ok := ret.Get(0).(func(context.Context, uuid.UUID) model0.Order); ok {
 		r0 = returnFunc(ctx, orderID)
 	} else {
-		r0 = ret.Get(0).(model.Order)
+		r0 = ret.Get(0).(model0.Order)
 	}
 	if returnFunc, ok := ret.Get(1).(func(context.Context, uuid.UUID) error); ok {
 		r1 = returnFunc(ctx, orderID)
@@ -247,12 +248,12 @@ func (_c *MockOrderRepository_Get_Call) Run(run func(ctx context.Context, orderI
 	return _c
 }
 
-func (_c *MockOrderRepository_Get_Call) Return(order model.Order, err error) *MockOrderRepository_Get_Call {
+func (_c *MockOrderRepository_Get_Call) Return(order model0.Order, err error) *MockOrderRepository_Get_Call {
 	_c.Call.Return(order, err)
 	return _c
 }
 
-func (_c *MockOrderRepository_Get_Call) RunAndReturn(run func(ctx context.Context, orderID uuid.UUID) (model.Order, error)) *MockOrderRepository_Get_Call {
+func (_c *MockOrderRepository_Get_Call) RunAndReturn(run func(ctx context.Context, orderID uuid.UUID) (model0.Order, error)) *MockOrderRepository_Get_Call {
 	_c.Call.Return(run)
 	return _c
 }

@@ -2,6 +2,7 @@ package conventer
 
 import (
 	"fmt"
+	"log"
 	"time"
 
 	"github.com/google/uuid"
@@ -198,17 +199,16 @@ func metadataToProto(meta model.Metadata) map[string]*inventoryV1.Value {
 
 	for k, v := range meta {
 		switch val := v.(type) {
-		case model.StringValue:
-			result[k] = &inventoryV1.Value{Value: &inventoryV1.Value_StringValue{StringValue: string(val)}}
-		case model.Int64Value:
-			result[k] = &inventoryV1.Value{Value: &inventoryV1.Value_Int64Value{Int64Value: int64(val)}}
-		case model.DoubleValue:
-			result[k] = &inventoryV1.Value{Value: &inventoryV1.Value_DoubleValue{DoubleValue: float64(val)}}
-		case model.BoolValue:
-			result[k] = &inventoryV1.Value{Value: &inventoryV1.Value_BoolValue{BoolValue: bool(val)}}
+		case string:
+			result[k] = &inventoryV1.Value{
+				Value: &inventoryV1.Value_StringValue{
+					StringValue: val,
+				},
+			}
 		default:
-			// nil-значение в map: пропускаем
 		}
 	}
+
+	log.Printf("Output metadata: %#v", result)
 	return result
 }

@@ -10,5 +10,5 @@ import (
 
 type Service interface {
 	GetByID(ctx context.Context, ID uuid.UUID) (model.Part, error)
-	ListByFilters(ctx context.Context, filter *model.PartsFilter) []model.Part
+	ListByFilters(ctx context.Context, filter *model.PartsFilter) ([]model.Part, error)
 }

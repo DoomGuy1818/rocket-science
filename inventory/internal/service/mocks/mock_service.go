@@ -115,7 +115,7 @@ func (_c *MockService_GetByID_Call) RunAndReturn(run func(ctx context.Context, I
 }
 
 // ListByFilters provides a mock function for the type MockService
-func (_mock *MockService) ListByFilters(ctx context.Context, filter *model.PartsFilter) []model.Part {
+func (_mock *MockService) ListByFilters(ctx context.Context, filter *model.PartsFilter) ([]model.Part, error) {
 	ret := _mock.Called(ctx, filter)
 
 	if len(ret) == 0 {
@@ -123,6 +123,10 @@ func (_mock *MockService) ListByFilters(ctx context.Context, filter *model.Parts
 	}
 
 	var r0 []model.Part
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, *model.PartsFilter) ([]model.Part, error)); ok {
+		return returnFunc(ctx, filter)
+	}
 	if returnFunc, ok := ret.Get(0).(func(context.Context, *model.PartsFilter) []model.Part); ok {
 		r0 = returnFunc(ctx, filter)
 	} else {
@@ -130,7 +134,12 @@ func (_mock *MockService) ListByFilters(ctx context.Context, filter *model.Parts
 			r0 = ret.Get(0).([]model.Part)
 		}
 	}
-	return r0
+	if returnFunc, ok := ret.Get(1).(func(context.Context, *model.PartsFilter) error); ok {
+		r1 = returnFunc(ctx, filter)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
 }
 
 // MockService_ListByFilters_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'ListByFilters'
@@ -163,12 +172,12 @@ func (_c *MockService_ListByFilters_Call) Run(run func(ctx context.Context, filt
 	return _c
 }
 
-func (_c *MockService_ListByFilters_Call) Return(parts []model.Part) *MockService_ListByFilters_Call {
-	_c.Call.Return(parts)
+func (_c *MockService_ListByFilters_Call) Return(parts []model.Part, err error) *MockService_ListByFilters_Call {
+	_c.Call.Return(parts, err)
 	return _c
 }
 
-func (_c *MockService_ListByFilters_Call) RunAndReturn(run func(ctx context.Context, filter *model.PartsFilter) []model.Part) *MockService_ListByFilters_Call {
+func (_c *MockService_ListByFilters_Call) RunAndReturn(run func(ctx context.Context, filter *model.PartsFilter) ([]model.Part, error)) *MockService_ListByFilters_Call {
 	_c.Call.Return(run)
 	return _c
 }
